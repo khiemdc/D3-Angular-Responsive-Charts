@@ -1,0 +1,29 @@
+app-bar-chart {
+  #bar-chart {
+      height: inherit;
+      width: inherit;
+
+      // .bar {
+      //     fill: steelblue;
+      // }
+      
+      .bar:hover {
+          fill: brown;
+      }
+
+      // text {
+      //   font-family: sans-serif;
+      //   fill: #000000;
+      //   text-anchor: middle;
+      // }
+
+      .text {
+        font-family: sans-serif;
+        fill:brown;
+        text-anchor: middle;
+      }
+  }
+
+  
+   
+}
