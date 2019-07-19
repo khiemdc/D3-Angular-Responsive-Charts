@@ -22,8 +22,20 @@ app-bar-chart {
         fill:brown;
         text-anchor: middle;
       }
+      
+      .toolTip {
+        position: absolute;
+        display: none;
+        min-width: 40px;
+        height: auto;
+        background: none repeat scroll 0 0 #ffffff;
+        // color: #000000;
+        border: 1px solid brown;
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
+      }
   }
 
-  
    
 }

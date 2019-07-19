@@ -14,7 +14,7 @@ export class BarChartComponent implements OnInit, OnChanges {
 
   @Input() data: Data[];
 
-  margin = { top: 20, right: 20, bottom: 30, left: 40 };
+  margin = { top: 20, right: 20, bottom: 50, left: 40 };
   colors = ['#9ecae1', '#deebf7', '#c6dbef', '#9ecae1', '#6baed6', '#4292c6', '#2171b5',
             '#08519c', '#08306b', '#9ecae1', '#6baed6', '#4292c6', '#2171b5'];
   // d3.schemeBlues[0 , 9];
@@ -29,7 +29,9 @@ export class BarChartComponent implements OnInit, OnChanges {
     this.createChart();
   }
 
-    private createChart(): void {
+  private createChart(): void {
+    d3.select('svg').remove();
+
     const element = this.chartContainer.nativeElement;
     const data = this.data;
 
@@ -42,10 +44,12 @@ export class BarChartComponent implements OnInit, OnChanges {
     const contentWidth = element.offsetWidth - this.margin.left - this.margin.right;
     const contentHeight = element.offsetHeight - this.margin.top - this.margin.bottom;
 
+    const tooltip = d3.select(element).append('div').attr('class', 'toolTip');
+
     const xScale = d3
       .scaleBand()
       .rangeRound([0, contentWidth])
-      .padding(0.1)
+      .padding(0.2)
       .domain(data.map(d => d.Month));
 
     const yScale = d3
@@ -53,14 +57,23 @@ export class BarChartComponent implements OnInit, OnChanges {
       .rangeRound([contentHeight, 0]).nice()
       .domain([0, d3.max(data, d => d.Candidates)]);
 
-    const g = svg.append('g')
+    const chart = svg.append('g')
       .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
 
     // xAxis
     const xAxis = svg.append('g')
       .attr('class', 'axis axis--x')
       .attr('transform', 'translate(' + this.margin.left + ',' + (contentHeight + this.margin.top) + ')')
-      .call(d3.axisBottom(xScale));
+      .call(d3.axisBottom(xScale))
+      
+      .append('text')
+      // .attr('dy', '0.5em')
+      .attr('font-size', '1.5em')
+      .attr('x', contentWidth / 2)
+      .attr('y', this.margin.bottom)
+      .attr('text-anchor', 'middle')
+      .text('Chart of Candidates in 2018 - 2019')
+      .attr('fill', 'black');
 
     // yAxis
     const yAxis = svg.append('g')
@@ -76,24 +89,49 @@ export class BarChartComponent implements OnInit, OnChanges {
       .text('Candidates')
       .attr('fill', 'black');
 
-    g.selectAll('.bar')
+    chart.selectAll('.bar')
       .data(data)
-      .enter().append('rect')
+      .enter()
+      .append('rect')
       .attr('class', 'bar')
       .attr('x', d => xScale(d.Month))
+      .attr('y', contentHeight)
+      .transition()
+      .duration(800)
       .attr('y', d => yScale(d.Candidates))
       .attr('width', xScale.bandwidth())
       .attr('height', d => contentHeight - yScale(d.Candidates))
-      .attr('fill', (d, i) => this.colors[i]);
-
-    g.selectAll('.text')
+      .attr('fill', (d, i) => this.colors[i])
+ 
+    chart.selectAll('.bar')
       .data(data)
-      .enter()
-      .append('text')
-      .attr('class', 'text')
-      .text(d => d.Candidates)
-      .attr('x', (d, i) => i * (contentWidth / data.length) + (contentWidth / data.length - this.margin.left))
-      .attr('y', d => yScale(d.Candidates) - 5 );
+      .on('mousemove', function(d) {
+        tooltip
+          .style('left', d3.event.pageX - 50 + 'px')
+          .style('top', d3.event.pageY - 70 + 'px')
+          .style('display', 'inline-block')
+          .html((d.Month) + ': ' + (d.Candidates)+' candidates')
+          })
+      .on('mouseout', function(d) { tooltip.style('display', 'none'); } );
+
+    
+      // svg.append('text')
+      //   .attr('x', contentWidth / 2 + this.margin.left)
+      //   .attr('y', contentHeight + this.margin.bottom + this.margin.top)
+      //   .attr('text-anchor', 'middle')
+      //   .text('Chart of Candidates in 2018 - 2019');
+
+    // Display Text on each bar charts
+    chart.selectAll('.text')
+        .data(data)
+        .enter()
+        .append('text')
+        .attr('class', 'text')
+        // .text(d => d.Candidates)
+        .attr('x', (a) => xScale(a.Month) + xScale.bandwidth() / 2)
+        .attr('y', (a) => yScale(a.Candidates) - 3)
+        .attr('text-anchor', 'middle')
+        .text((a) => `${a.Candidates}`)
 
   }
 
