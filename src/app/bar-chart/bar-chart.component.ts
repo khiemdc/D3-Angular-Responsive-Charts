@@ -24,9 +24,11 @@ export class BarChartComponent implements OnInit, OnChanges {
   ngOnInit() { }
 
   ngOnChanges(): void {
+    console.log('Chart Data: ', this.data);
     if (!this.data) { return; }
 
-    this.createChart();
+    // this.createChart();
+    this.createHorizontalBarchart();
   }
 
   private createChart(): void {
@@ -72,7 +74,7 @@ export class BarChartComponent implements OnInit, OnChanges {
       .attr('x', contentWidth / 2)
       .attr('y', this.margin.bottom)
       .attr('text-anchor', 'middle')
-      .text('Chart of Candidates in 2018 - 2019')
+      .text('Security Cleanance Levels')
       .attr('fill', 'black');
 
     // yAxis
@@ -86,7 +88,7 @@ export class BarChartComponent implements OnInit, OnChanges {
       .attr('dy', '0.71em')
       // .attr('text-anchor', 'end')
       .attr('text-anchor', 'middle')
-      .text('Candidates')
+      .text('Employees')
       .attr('fill', 'black');
 
     chart.selectAll('.bar')
@@ -101,8 +103,8 @@ export class BarChartComponent implements OnInit, OnChanges {
       .attr('y', d => yScale(d.Candidates))
       .attr('width', xScale.bandwidth())
       .attr('height', d => contentHeight - yScale(d.Candidates))
-      .attr('fill', (d, i) => this.colors[i])
- 
+      .attr('fill', (d, i) => this.colors[i]);
+      
     chart.selectAll('.bar')
       .data(data)
       .on('mousemove', function(d) {
@@ -110,9 +112,12 @@ export class BarChartComponent implements OnInit, OnChanges {
           .style('left', d3.event.pageX - 50 + 'px')
           .style('top', d3.event.pageY - 70 + 'px')
           .style('display', 'inline-block')
-          .html((d.Month) + ': ' + (d.Candidates)+' candidates')
+          .html((d.Month) + ': ' + (d.Candidates) + ' candidates');
           })
-      .on('mouseout', function(d) { tooltip.style('display', 'none'); } );
+      .on('mouseout', function(d) { tooltip.style('display', 'none'); })
+      .on('click', d => {
+        console.log('clicked on: ', d);
+      });
 
     
       // svg.append('text')
@@ -137,6 +142,32 @@ export class BarChartComponent implements OnInit, OnChanges {
 
   onResize() {
     this.createChart();
+  }
+
+  // D3 - Horizontal Bar Chart
+  createHorizontalBarchart() {
+
+    const element = this.chartContainer.nativeElement;
+    const data = this.data;
+
+    d3.select(element).select('svg').remove();
+
+    const canvas = d3.select(element)
+      .append('svg')
+      .attr('width', element.offsetWidth)
+      .attr('height', element.offsetHeight);
+
+    const contentWidth = element.offsetWidth - this.margin.left - this.margin.right;
+    const contentHeight = element.offsetHeight - this.margin.top - this.margin.bottom;
+
+    const bars = canvas.selectAll('rect')
+                  .data(data)
+                  .enter()
+                    .append('rect')
+                    .attr('width', d => d.Candidates * 2)
+                    .attr('height', 50 )
+                    .attr('y', (d, i) => i * 80);
+                    
   }
 
 }
