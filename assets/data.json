@@ -1,0 +1,15 @@
+[
+  {"Month": "Jan", "Candidates": 321},
+  {"Month": "Feb", "Candidates": 230},
+  {"Month": "Mar", "Candidates": 440},
+  {"Month": "Apr", "Candidates": 555},
+  {"Month": "May", "Candidates": 123},
+  {"Month": "Jun", "Candidates": 349},
+  {"Month": "Jul", "Candidates": 59},
+  {"Month": "Aug", "Candidates": 434},
+  {"Month": "Sep", "Candidates": 303},
+  {"Month": "Oct", "Candidates": 204},
+  {"Month": "Nov", "Candidates": 501},
+  {"Month": "Dec", "Candidates": 213}
+
+]
