@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Data } from '../models/data.model';
+import { ICountriesData, Data } from '../models/data.model';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -13,5 +13,10 @@ constructor(private http: HttpClient) { }
 public getBarchatData(): Observable<Data[]> {
   return this.http.get<Data[]>('../../assets/data.json');
 }
+
+public getCountriesData(): Observable<ICountriesData[]> {
+  return this.http.get<ICountriesData[]>('../../assets/countries.json');
+}
+
 
 }

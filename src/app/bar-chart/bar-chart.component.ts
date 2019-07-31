@@ -12,10 +12,12 @@ import * as d3 from 'd3';
 export class BarChartComponent implements OnInit, OnChanges {
   @ViewChild('barChart') private chartContainer: ElementRef;
 
+  @ViewChild('horizontalBarchart') private horizontalChartContainer: ElementRef;
+
   @Input() data: Data[];
 
   margin = { top: 20, right: 20, bottom: 50, left: 40 };
-  colors = ['#9ecae1', '#deebf7', '#c6dbef', '#9ecae1', '#6baed6', '#4292c6', '#2171b5',
+  colors = ['#9ecae1', '#9ecae1', '#deebf7', '#c6dbef', '#6baed6', '#4292c6', '#2171b5',
             '#08519c', '#08306b', '#9ecae1', '#6baed6', '#4292c6', '#2171b5'];
   // d3.schemeBlues[0 , 9];
 
@@ -27,7 +29,7 @@ export class BarChartComponent implements OnInit, OnChanges {
     console.log('Chart Data: ', this.data);
     if (!this.data) { return; }
 
-    // this.createChart();
+    this.createChart();
     this.createHorizontalBarchart();
   }
 
@@ -142,32 +144,114 @@ export class BarChartComponent implements OnInit, OnChanges {
 
   onResize() {
     this.createChart();
+    this.createHorizontalBarchart();
   }
 
   // D3 - Horizontal Bar Chart
   createHorizontalBarchart() {
 
-    const element = this.chartContainer.nativeElement;
+    const element = this.horizontalChartContainer.nativeElement;
     const data = this.data;
 
     d3.select(element).select('svg').remove();
 
-    const canvas = d3.select(element)
-      .append('svg')
+    const svg = d3.select(element).append('svg')
       .attr('width', element.offsetWidth)
       .attr('height', element.offsetHeight);
 
     const contentWidth = element.offsetWidth - this.margin.left - this.margin.right;
     const contentHeight = element.offsetHeight - this.margin.top - this.margin.bottom;
 
-    const bars = canvas.selectAll('rect')
-                  .data(data)
-                  .enter()
-                    .append('rect')
-                    .attr('width', d => d.Candidates * 2)
-                    .attr('height', 50 )
-                    .attr('y', (d, i) => i * 80);
-                    
+    const tooltip = d3.select(element).append('div').attr('class', 'toolTip');
+
+    const yScale = d3
+      .scaleBand()
+      .rangeRound([contentHeight, 0])
+      .padding(0.2)
+      .domain(data.map(d => d.Month));
+
+    const xScale = d3.scaleLinear()
+      .rangeRound([0, contentWidth]) // .nice()
+      .domain([0, d3.max(data, d => d.Candidates)]);
+
+    const chart = svg.append('g')
+      .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
+
+    // xAxis
+    const xAxis = svg.append('g')
+      .attr('class', 'axis axis--x')
+      .attr('transform', 'translate(' + this.margin.left + ',' + (contentHeight + this.margin.top) + ')')
+      .call(d3.axisBottom(xScale).ticks(10))
+      
+      .append('text')
+      // .attr('dy', '0.5em')
+      .attr('font-size', '1.5em')
+      .attr('x', contentWidth / 2)
+      .attr('y', this.margin.bottom)
+      .attr('text-anchor', 'middle')
+      .text('Security Cleanance Levels')
+      .attr('fill', 'black');
+
+    // yAxis
+    const yAxis = svg.append('g')
+      .attr('class', 'axis axis--y')
+      .attr('transform', 'translate(' + this.margin.left + ', ' + this.margin.top + ')')
+      .call(d3.axisLeft(yScale))
+      .append('text')
+      .attr('transform', 'rotate(-90)')
+      .attr('y', 6)
+      .attr('dy', '0.71em')
+      // .attr('text-anchor', 'end')
+      .attr('text-anchor', 'middle')
+      .text('Employees')
+      .attr('fill', 'black');
+
+    chart.selectAll('.bar')
+      .data(data)
+      .enter()
+        .append('rect')
+        .attr('class', 'bar')
+        .attr('y', d => yScale(d.Month))
+        .attr('x', 0)
+        .transition()
+        .duration(800)
+        .attr('height', yScale.bandwidth())
+        .attr('width', d => xScale(d.Candidates))
+        .attr('fill', (d, i) => this.colors[i]);
+      
+    chart.selectAll('.bar')
+      .data(data)
+      .on('mousemove', function(d) {
+        tooltip
+          .style('left', d3.event.pageX - 50 + 'px')
+          .style('top', d3.event.pageY - 70 + 'px')
+          .style('display', 'inline-block')
+          .html((d.Month) + ': ' + (d.Candidates) + ' candidates');
+          })
+      .on('mouseout', function(d) { tooltip.style('display', 'none'); })
+      .on('click', d => {
+        console.log('clicked on: ', d);
+      });
+
+    
+      // svg.append('text')
+      //   .attr('x', contentWidth / 2 + this.margin.left)
+      //   .attr('y', contentHeight + this.margin.bottom + this.margin.top)
+      //   .attr('text-anchor', 'middle')
+      //   .text('Chart of Candidates in 2018 - 2019');
+
+    // Display Text on each bar charts
+    chart.selectAll('.text')
+        .data(data)
+        .enter()
+        .append('text')
+        .attr('class', 'text')
+        // .text(d => d.Candidates)
+        .attr('y', (a) => yScale(a.Month) + yScale.bandwidth() / 2 + 5)
+        .attr('x', (a) => xScale(a.Candidates) - d3.min(data, d => xScale(d.Candidates)) / 3)
+        .attr('text-anchor', 'middle')
+        .text((a) => `${a.Candidates}`);
+            
   }
 
 }

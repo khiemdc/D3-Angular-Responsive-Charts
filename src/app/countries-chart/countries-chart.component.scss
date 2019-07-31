@@ -1,0 +1,51 @@
+// Countries Chart
+app-countries-chart {
+    #bar-chart {
+        height: inherit;
+        width: inherit;
+  
+        .bar:hover {
+            fill: brown;
+            cursor: pointer;
+          }
+  
+        .text {
+          font-family: sans-serif;
+          // fill:brown;
+          fill: #ffffff;
+          font-weight: bold;
+          // text-anchor: middle;
+        }
+        
+        .text2 {
+          font-family: sans-serif;
+          // fill:brown;
+          fill: #ffffff;
+          // font-weight: bold;
+        }
+
+
+        .toolTip {
+          position: absolute;
+          display: none;
+          min-width: 40px;
+          height: auto;
+          background: none repeat scroll 0 0 #ffffff;
+          // color: #000000;
+          border: 1px solid brown;
+          padding: 10px;
+          border-radius: 5px;
+          text-align: center;
+        }
+    }
+  }
+
+
+
+
+
+
+
+
+
+    

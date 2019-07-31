@@ -1,2 +1,16 @@
-<h1>D3 - Candidates chart</h1>
-<app-bar-chart [data]="data"></app-bar-chart>
+<h1>D3 - Data Driven Documents Charts</h1>
+<hr><br />
+<h3><label>Select Country: </label>
+    <select style="font-size: 18px; padding: 5px 15px;" (change)="navigateTo($event.target.value)">
+        <option *ngFor="let chart of charts" [value]="chart.country">
+            {{chart.country}}
+        </option>
+    </select>
+</h3>
+<div style="width:100%; margin-top: 50px;">
+    <!-- <app-bar-chart [data]="data"></app-bar-chart> -->
+    <app-countries-chart *ngIf="countryChart"></app-countries-chart>
+    <app-china-chart *ngIf="chinaChart"></app-china-chart>
+    <app-vietnam-chart *ngIf="vietnamChart"></app-vietnam-chart>
+</div>
+
