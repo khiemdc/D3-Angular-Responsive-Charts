@@ -153,7 +153,7 @@ private createVerticalBarchart(): void {
 
 }
 
-onResize() {
+onResize(e) {
   this.createVerticalBarchart();
   // this.createBarchart();
 }

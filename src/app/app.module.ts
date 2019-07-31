@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
-import { BarChartComponent } from './bar-chart/bar-chart.component';
 import { ChartsService } from './services/charts.service';
 import { CountriesChartComponent } from './countries-chart/countries-chart.component';
 import { VietnamChartComponent } from './vietnam-chart/vietnam-chart.component';
@@ -12,7 +11,6 @@ import { ChinaChartComponent } from './china-chart/china-chart.component';
 @NgModule({
    declarations: [
       AppComponent,
-      BarChartComponent,
       CountriesChartComponent,
       ChinaChartComponent,
       VietnamChartComponent

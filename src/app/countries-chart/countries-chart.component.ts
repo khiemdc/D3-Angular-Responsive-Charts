@@ -150,7 +150,7 @@ export class CountriesChartComponent implements OnInit, OnChanges {
     }
   
     
-    onResize() {
+    onResize(e) {
       this.createCountriesChart();
     }
   
